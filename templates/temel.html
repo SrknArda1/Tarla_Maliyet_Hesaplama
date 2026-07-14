@@ -1,0 +1,57 @@
+{# ============================================================
+   temel.html  -  ANA SABLON (LAYOUT)
+   Diger tum sayfalar bu sablonu "extends" eder. Ust menu ve
+   sayfa iskeleti burada bir kez tanimlanir, tekrar yazilmaz.
+   Laravel karsiligi: layouts/app.blade.php  +  @yield('content')
+   ============================================================ #}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block baslik %}Tarla Maliyet Sistemi{% endblock %}</title>
+
+    {# Distinctive fontlar: Fraunces (basliklar) + DM Sans (govde metni) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    {# url_for('static', ...) -> static/style.css dosyasinin yolunu uretir #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {# ---------- UST MENU ---------- #}
+    <header class="ust-bar">
+        <div class="ic-kapsayici ust-bar-ic">
+            <a href="{{ url_for('anasayfa') }}" class="logo">
+                <span class="logo-isaret">&#9650;</span>
+                <span>
+                    <strong>Tarla Maliyet</strong>
+                    <em>Urun Maliyet Plani &amp; Analiz Sistemi</em>
+                </span>
+            </a>
+            <nav class="menu">
+                <a href="{{ url_for('anasayfa') }}">Kayitlar</a>
+                <a href="{{ url_for('ekle') }}">Veri Ekle</a>
+                <a href="{{ url_for('analiz_sayfasi') }}">Analiz &amp; Grafik</a>
+            </nav>
+        </div>
+    </header>
+
+    {# ---------- SAYFA ICERIGI ----------
+       Her sayfa kendi icerigini bu "content" blogunun icine koyar. #}
+    <main class="ic-kapsayici icerik">
+        {% block content %}{% endblock %}
+    </main>
+
+    {# ---------- ALT BILGI ---------- #}
+    <footer class="alt-bar">
+        <div class="ic-kapsayici">
+            Tarla Bazli Urun Maliyet Plani ve Analiz Sistemi &middot;
+            Python &middot; Pandas &middot; NumPy &middot; Matplotlib &middot; Seaborn &middot; Flask
+        </div>
+    </footer>
+
+</body>
+</html>

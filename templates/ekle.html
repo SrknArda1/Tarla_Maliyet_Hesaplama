@@ -1,0 +1,88 @@
+{# ============================================================
+   ekle.html  -  YENI KAYIT FORMU
+   Form gonderilince POST ile /ekle adresine gider, app.py kaydeder.
+   ============================================================ #}
+{% extends "temel.html" %}
+
+{% block baslik %}Veri Ekle - Tarla Maliyet Sistemi{% endblock %}
+
+{% block content %}
+
+    <div class="sayfa-basligi">
+        <div>
+            <h1>Yeni Kayit Ekle</h1>
+            <p class="alt-metin">Tarla, urun, maliyet kalemleri ve gelir bilgilerini gir</p>
+        </div>
+        <a href="{{ url_for('anasayfa') }}" class="dugme dugme-sade">&larr; Geri</a>
+    </div>
+
+    <section class="kart">
+        {# method="post" -> form POST ile gonderilir.
+           action -> verinin gidecegi adres (app.py'deki /ekle route'u). #}
+        <form method="post" action="{{ url_for('ekle') }}" class="form">
+
+            <h3 class="form-grup-baslik">Tarla &amp; Urun Bilgileri</h3>
+            <div class="form-izgara">
+                <label>Sezon (yil)
+                    <input type="number" name="sezon" value="2025" required>
+                </label>
+                <label>Tarla Adi
+                    <input type="text" name="tarla_adi" placeholder="orn: Dere Tarlasi" required>
+                </label>
+                <label>Alan (donum)
+                    <input type="number" step="0.1" name="alan_donum" placeholder="orn: 45" required>
+                </label>
+                <label>Konum
+                    <input type="text" name="konum" placeholder="orn: Yalova Cinarcik">
+                </label>
+                <label>Urun Adi
+                    <input type="text" name="urun_adi" placeholder="orn: Bugday" required>
+                </label>
+                <label>Ekim Tarihi
+                    <input type="date" name="ekim_tarihi">
+                </label>
+                <label>Hasat Tarihi
+                    <input type="date" name="hasat_tarihi">
+                </label>
+            </div>
+
+            <h3 class="form-grup-baslik">Maliyet Kalemleri (TL)</h3>
+            <div class="form-izgara">
+                <label>Tohum
+                    <input type="number" step="0.01" name="maliyet_tohum" value="0">
+                </label>
+                <label>Gubre
+                    <input type="number" step="0.01" name="maliyet_gubre" value="0">
+                </label>
+                <label>Ilac
+                    <input type="number" step="0.01" name="maliyet_ilac" value="0">
+                </label>
+                <label>Sulama
+                    <input type="number" step="0.01" name="maliyet_sulama" value="0">
+                </label>
+                <label>Iscilik
+                    <input type="number" step="0.01" name="maliyet_iscilik" value="0">
+                </label>
+                <label>Makine
+                    <input type="number" step="0.01" name="maliyet_makine" value="0">
+                </label>
+            </div>
+
+            <h3 class="form-grup-baslik">Gelir Bilgisi</h3>
+            <div class="form-izgara">
+                <label>Hasat Miktari (kg)
+                    <input type="number" step="0.01" name="hasat_miktari_kg" value="0">
+                </label>
+                <label>Satis Fiyati (TL / kg)
+                    <input type="number" step="0.01" name="satis_fiyati_kg" value="0">
+                </label>
+            </div>
+
+            <div class="form-alt">
+                <button type="submit" class="dugme dugme-ana">Kaydet</button>
+                <a href="{{ url_for('anasayfa') }}" class="dugme dugme-sade">Vazgec</a>
+            </div>
+        </form>
+    </section>
+
+{% endblock %}

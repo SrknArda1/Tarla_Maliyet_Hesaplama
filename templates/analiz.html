@@ -1,0 +1,234 @@
+{# ============================================================
+   analiz.html  -  ANALIZ, GRAFIK VE RAPOR SAYFASI
+   Filtre, 4 grafik, ozet tablolari, pivot tablo, sezon merge
+   karsilastirmasi ve CSV/Excel indirme butonlari burada.
+   ============================================================ #}
+{% extends "temel.html" %}
+
+{% block baslik %}Analiz & Grafik - Tarla Maliyet Sistemi{% endblock %}
+
+{% block content %}
+
+    <div class="sayfa-basligi">
+        <div>
+            <h1>Analiz &amp; Grafik</h1>
+            <p class="alt-metin">Pandas ile gruplama, NumPy ile hesap, Seaborn ile gorsellestirme</p>
+        </div>
+    </div>
+
+    {# ---------- FILTRE CUBUGU ---------- #}
+    {# Form method="get" -> secimler URL'ye ?sezon=...&tarla=... olarak eklenir #}
+    <section class="kart filtre-kart">
+        <form method="get" action="{{ url_for('analiz_sayfasi') }}" class="filtre-form">
+            <label>Sezon
+                <select name="sezon">
+                    <option value="Hepsi">Hepsi</option>
+                    {% for s in sezon_listesi %}
+                    <option value="{{ s }}" {{ 'selected' if secili.sezon == s }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Tarla
+                <select name="tarla">
+                    <option value="Hepsi">Hepsi</option>
+                    {% for t in tarla_listesi %}
+                    <option value="{{ t }}" {{ 'selected' if secili.tarla == t }}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Urun
+                <select name="urun">
+                    <option value="Hepsi">Hepsi</option>
+                    {% for u in urun_listesi %}
+                    <option value="{{ u }}" {{ 'selected' if secili.urun == u }}>{{ u }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit" class="dugme dugme-ana">Filtrele</button>
+            <a href="{{ url_for('analiz_sayfasi') }}" class="dugme dugme-sade">Temizle</a>
+
+            {# Rapor indirme: ayni filtre degerlerini link olarak tasiriz #}
+            <span class="filtre-ayrac"></span>
+            <a class="dugme dugme-toprak"
+               href="{{ url_for('rapor_csv', sezon=secili.sezon, tarla=secili.tarla, urun=secili.urun) }}">
+               CSV Indir
+            </a>
+            <a class="dugme dugme-toprak"
+               href="{{ url_for('rapor_excel', sezon=secili.sezon, tarla=secili.tarla, urun=secili.urun) }}">
+               Excel Indir
+            </a>
+        </form>
+    </section>
+
+    {% if not istatistik %}
+        <p class="bos-uyari">Bu filtreye uygun kayit bulunamadi.</p>
+    {% else %}
+
+    {# ---------- NUMPY ISTATISTIK SATIRI ---------- #}
+    <section class="kutu-izgara">
+        <div class="ozet-kutu">
+            <span class="kutu-etiket">Ortalama Kar</span>
+            <span class="kutu-deger">{{ istatistik.ortalama_kar|tl }}</span>
+        </div>
+        <div class="ozet-kutu">
+            <span class="kutu-etiket">Standart Sapma</span>
+            <span class="kutu-deger">{{ istatistik.std_kar|tl }}</span>
+        </div>
+        <div class="ozet-kutu pozitif">
+            <span class="kutu-etiket">En Yuksek Kar</span>
+            <span class="kutu-deger">{{ istatistik.en_yuksek_kar|tl }}</span>
+        </div>
+        <div class="ozet-kutu negatif">
+            <span class="kutu-etiket">En Dusuk Kar</span>
+            <span class="kutu-deger">{{ istatistik.en_dusuk_kar|tl }}</span>
+        </div>
+    </section>
+
+    {# ---------- GRAFIKLER (Matplotlib + Seaborn ile uretildi) ---------- #}
+    <section class="grafik-izgara">
+        <div class="kart grafik-kart">
+            <h3>Maliyet Kalemleri (Cubuk)</h3>
+            <img src="{{ url_for('static', filename='grafikler/' + grafikler.cubuk) }}" alt="Maliyet cubuk grafik">
+        </div>
+        <div class="kart grafik-kart">
+            <h3>Maliyet Dagilimi (Pasta)</h3>
+            <img src="{{ url_for('static', filename='grafikler/' + grafikler.pasta) }}" alt="Maliyet pasta grafik">
+        </div>
+        <div class="kart grafik-kart">
+            <h3>Tarla Bazli Kar / Zarar (Cubuk)</h3>
+            <img src="{{ url_for('static', filename='grafikler/' + grafikler.tarla) }}" alt="Tarla kar grafik">
+        </div>
+        <div class="kart grafik-kart">
+            <h3>Sezon Trendi (Cizgi)</h3>
+            <img src="{{ url_for('static', filename='grafikler/' + grafikler.sezon) }}" alt="Sezon cizgi grafik">
+        </div>
+    </section>
+
+    {# ---------- TARLAYA GORE OZET TABLOSU ---------- #}
+    <section class="kart">
+        <h2>Tarlaya Gore Toplam Maliyet Tablosu</h2>
+        <div class="tablo-sarici">
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Tarla</th>
+                        <th class="sag">Kayit</th>
+                        <th class="sag">Toplam Maliyet</th>
+                        <th class="sag">Toplam Gelir</th>
+                        <th class="sag">Kar / Zarar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in tarla_ozeti %}
+                    <tr>
+                        <td>{{ r.tarla_adi }}</td>
+                        <td class="sag">{{ r.kayit_sayisi }}</td>
+                        <td class="sag">{{ r.toplam_maliyet|tl }}</td>
+                        <td class="sag">{{ r.toplam_gelir|tl }}</td>
+                        <td class="sag {{ 'pozitif' if r.kar_zarar >= 0 else 'negatif' }}">
+                            {{ r.kar_zarar|tl }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# ---------- URUNE GORE KAR/ZARAR OZETI ---------- #}
+    <section class="kart">
+        <h2>Urune Gore Kar / Zarar Ozeti</h2>
+        <div class="tablo-sarici">
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Urun</th>
+                        <th class="sag">Kayit</th>
+                        <th class="sag">Toplam Maliyet</th>
+                        <th class="sag">Toplam Gelir</th>
+                        <th class="sag">Kar / Zarar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in urun_ozeti %}
+                    <tr>
+                        <td>{{ r.urun_adi }}</td>
+                        <td class="sag">{{ r.kayit_sayisi }}</td>
+                        <td class="sag">{{ r.toplam_maliyet|tl }}</td>
+                        <td class="sag">{{ r.toplam_gelir|tl }}</td>
+                        <td class="sag {{ 'pozitif' if r.kar_zarar >= 0 else 'negatif' }}">
+                            {{ r.kar_zarar|tl }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# ---------- PIVOT TABLO (tarla x urun) ---------- #}
+    {% if pivot_satirlar %}
+    <section class="kart">
+        <h2>Pivot Tablo &mdash; Tarla x Urun Kar / Zarar</h2>
+        <div class="tablo-sarici">
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Tarla \ Urun</th>
+                        {% for sutun in pivot_sutunlar %}
+                        <th class="sag">{{ sutun }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for satir in pivot_satirlar %}
+                    <tr>
+                        <td><strong>{{ satir.tarla_adi }}</strong></td>
+                        {% for sutun in pivot_sutunlar %}
+                        <td class="sag {{ 'pozitif' if satir[sutun] > 0 else ('negatif' if satir[sutun] < 0 else '') }}">
+                            {{ satir[sutun]|tl }}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+    {# ---------- SEZON KARSILASTIRMA (merge ornegi) ---------- #}
+    {% if karsilastirma %}
+    <section class="kart">
+        <h2>Sezonlar Arasi Karsilastirma (merge)</h2>
+        <p class="alt-metin">Ayni urunun iki sezondaki kari yan yana &mdash; pd.merge ile birlestirildi.</p>
+        <div class="tablo-sarici">
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Urun</th>
+                        {% for anahtar in karsilastirma[0].keys() if anahtar != 'urun_adi' %}
+                        <th class="sag">{{ anahtar }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in karsilastirma %}
+                    <tr>
+                        <td>{{ r.urun_adi }}</td>
+                        {% for anahtar, deger in r.items() if anahtar != 'urun_adi' %}
+                        <td class="sag {{ 'pozitif' if deger > 0 else ('negatif' if deger < 0 else '') }}">
+                            {{ deger|tl }}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+    {% endif %}
+
+{% endblock %}

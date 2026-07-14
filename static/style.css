@@ -1,0 +1,277 @@
+/* ============================================================
+   style.css  -  TARLA MALIYET SISTEMI ARAYUZ TASARIMI
+   Tema: tarim / toprak. Krem zemin, koyu yesil, amber vurgu.
+   ============================================================ */
+
+/* ---------- DEGISKENLER (renkleri tek yerden yonet) ---------- */
+:root {
+    --zemin:        #f3eee3;   /* krem arka plan */
+    --kart:         #fffdf8;   /* kart yuzeyi */
+    --yesil:        #3f6634;   /* ana renk - koyu yesil */
+    --yesil-koyu:   #2f4d27;
+    --toprak:       #b07d3c;   /* vurgu - amber/toprak */
+    --kirmizi:      #b5483d;   /* zarar / silme */
+    --metin:        #2c2a22;   /* govde metni */
+    --metin-soluk:  #7c766a;   /* ikincil metin */
+    --cizgi:        #e3dccb;   /* ince ayrac cizgileri */
+    --golge:        0 2px 8px rgba(60, 50, 30, 0.07);
+}
+
+/* ---------- GENEL SIFIRLAMA ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--zemin);
+    color: var(--metin);
+    line-height: 1.55;
+    /* hafif dokulu arka plan */
+    background-image: radial-gradient(rgba(176,125,60,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+}
+
+h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; }
+
+a { color: inherit; text-decoration: none; }
+
+.ic-kapsayici { max-width: 1140px; margin: 0 auto; padding: 0 22px; }
+
+/* ---------- UST MENU ---------- */
+.ust-bar {
+    background-color: var(--yesil-koyu);
+    color: #f3eee3;
+    border-bottom: 3px solid var(--toprak);
+}
+.ust-bar-ic {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-isaret { color: var(--toprak); font-size: 18px; }
+.logo strong { font-family: 'Fraunces', serif; font-size: 19px; display: block; }
+.logo em { font-style: normal; font-size: 12px; color: #c8d0bd; }
+
+.menu { display: flex; gap: 6px; }
+.menu a {
+    padding: 8px 16px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+.menu a:hover { background-color: rgba(255,255,255,0.12); }
+
+/* ---------- SAYFA YERLESIMI ---------- */
+.icerik { padding-top: 34px; padding-bottom: 50px; }
+
+.sayfa-basligi {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 20px;
+}
+.sayfa-basligi h1 { font-size: 30px; color: var(--yesil-koyu); }
+.alt-metin { color: var(--metin-soluk); font-size: 14px; }
+
+/* ---------- OZET KUTULARI ---------- */
+.kutu-izgara {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 26px;
+}
+.ozet-kutu {
+    background-color: var(--kart);
+    border: 1px solid var(--cizgi);
+    border-left: 4px solid var(--toprak);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--golge);
+}
+.ozet-kutu.pozitif { border-left-color: var(--yesil); }
+.ozet-kutu.negatif { border-left-color: var(--kirmizi); }
+.kutu-etiket {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--metin-soluk);
+    margin-bottom: 6px;
+}
+.kutu-deger { font-size: 22px; font-weight: 600; font-family: 'Fraunces', serif; }
+
+/* ---------- KARTLAR ---------- */
+.kart {
+    background-color: var(--kart);
+    border: 1px solid var(--cizgi);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: var(--golge);
+    margin-bottom: 22px;
+}
+.kart h2 {
+    font-size: 19px;
+    color: var(--yesil-koyu);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cizgi);
+}
+.kart h3 { font-size: 15px; color: var(--yesil-koyu); margin-bottom: 12px; }
+
+/* ---------- TABLOLAR ---------- */
+.tablo-sarici { overflow-x: auto; }
+.tablo { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tablo thead th {
+    background-color: #efe9da;
+    color: var(--yesil-koyu);
+    text-align: left;
+    font-weight: 600;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--cizgi);
+}
+.tablo tbody td { padding: 10px 12px; border-bottom: 1px solid var(--cizgi); }
+.tablo tbody tr:hover { background-color: #faf6ec; }
+.tablo .sag { text-align: right; }
+
+.pozitif { color: var(--yesil); font-weight: 600; }
+.negatif { color: var(--kirmizi); font-weight: 600; }
+
+/* ---------- ROZETLER ---------- */
+.rozet {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.rozet-yesil   { background-color: #e0ebd6; color: var(--yesil); }
+.rozet-kirmizi { background-color: #f2dcd9; color: var(--kirmizi); }
+.rozet-notr    { background-color: #ece4d2; color: var(--toprak); }
+
+/* ---------- DUGMELER ---------- */
+.dugme {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.08s ease, opacity 0.15s ease;
+}
+.dugme:hover { transform: translateY(-1px); opacity: 0.92; }
+.dugme-ana    { background-color: var(--yesil); color: #fff; }
+.dugme-toprak { background-color: var(--toprak); color: #fff; }
+.dugme-sade   { background-color: transparent; border-color: var(--cizgi); color: var(--metin); }
+
+.sil-link { color: var(--kirmizi); font-size: 13px; font-weight: 600; }
+.sil-link:hover { text-decoration: underline; }
+
+/* ---------- FORM ---------- */
+.form-grup-baslik {
+    font-size: 14px;
+    color: var(--toprak);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 20px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--cizgi);
+}
+.form-grup-baslik:first-child { margin-top: 0; }
+.form-izgara {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px 18px;
+}
+.form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--metin-soluk);
+    gap: 5px;
+}
+.form input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 9px 11px;
+    border: 1px solid var(--cizgi);
+    border-radius: 7px;
+    background-color: #fff;
+    color: var(--metin);
+}
+.form input:focus { outline: 2px solid var(--yesil); outline-offset: -1px; }
+.form-alt { margin-top: 22px; display: flex; gap: 10px; }
+
+/* ---------- FILTRE CUBUGU ---------- */
+.filtre-form {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.filtre-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--metin-soluk);
+    gap: 5px;
+}
+.filtre-form select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 8px 11px;
+    border: 1px solid var(--cizgi);
+    border-radius: 7px;
+    background-color: #fff;
+    min-width: 150px;
+}
+.filtre-ayrac { flex: 1; }
+
+/* ---------- GRAFIK IZGARASI ---------- */
+.grafik-izgara {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 22px;
+}
+.grafik-kart img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--cizgi);
+}
+
+/* ---------- UYARI / BOS DURUM ---------- */
+.bos-uyari {
+    background-color: #ece4d2;
+    color: var(--toprak);
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* ---------- ALT BILGI ---------- */
+.alt-bar {
+    background-color: var(--yesil-koyu);
+    color: #c8d0bd;
+    font-size: 13px;
+    padding: 18px 0;
+    text-align: center;
+}
+
+/* ---------- KUCUK EKRAN UYUMU ---------- */
+@media (max-width: 860px) {
+    .kutu-izgara { grid-template-columns: repeat(2, 1fr); }
+    .grafik-izgara { grid-template-columns: 1fr; }
+    .form-izgara { grid-template-columns: 1fr 1fr; }
+    .ust-bar-ic { flex-direction: column; gap: 12px; }
+    .sayfa-basligi { flex-direction: column; align-items: flex-start; }
+}

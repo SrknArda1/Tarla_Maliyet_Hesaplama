@@ -1,0 +1,94 @@
+{# ============================================================
+   anasayfa.html  -  KAYIT LISTESI + GENEL OZET
+   "temel.html" sablonunu genisletir; sadece content blogunu doldurur.
+   ============================================================ #}
+{% extends "temel.html" %}
+
+{% block baslik %}Kayitlar - Tarla Maliyet Sistemi{% endblock %}
+
+{% block content %}
+
+    <div class="sayfa-basligi">
+        <div>
+            <h1>Tarla Kayitlari</h1>
+            <p class="alt-metin">Tum tarla-urun-sezon kayitlari ve genel maliyet ozeti</p>
+        </div>
+        <a href="{{ url_for('ekle') }}" class="dugme dugme-ana">+ Yeni Kayit Ekle</a>
+    </div>
+
+    {# ---------- OZET KUTULARI (numpy ile hesaplanan istatistikler) ---------- #}
+    <section class="kutu-izgara">
+        <div class="ozet-kutu">
+            <span class="kutu-etiket">Toplam Kayit</span>
+            <span class="kutu-deger">{{ istatistik.kayit_sayisi }}</span>
+        </div>
+        <div class="ozet-kutu">
+            <span class="kutu-etiket">Toplam Maliyet</span>
+            <span class="kutu-deger">{{ istatistik.toplam_maliyet|tl }}</span>
+        </div>
+        <div class="ozet-kutu {{ 'pozitif' if istatistik.toplam_kar >= 0 else 'negatif' }}">
+            <span class="kutu-etiket">Toplam Kar / Zarar</span>
+            <span class="kutu-deger">{{ istatistik.toplam_kar|tl }}</span>
+        </div>
+        <div class="ozet-kutu">
+            <span class="kutu-etiket">Karli / Zararli</span>
+            <span class="kutu-deger">{{ istatistik.karli_kayit }} / {{ istatistik.zararli_kayit }}</span>
+        </div>
+    </section>
+
+    {# ---------- KAYIT TABLOSU ---------- #}
+    <section class="kart">
+        <h2>Tum Kayitlar</h2>
+
+        {% if kayitlar %}
+        <div class="tablo-sarici">
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Sezon</th>
+                        <th>Tarla</th>
+                        <th>Urun</th>
+                        <th>Alan</th>
+                        <th class="sag">Toplam Maliyet</th>
+                        <th class="sag">Toplam Gelir</th>
+                        <th class="sag">Kar / Zarar</th>
+                        <th>Maliyet Sinifi</th>
+                        <th>Durum</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Her kayit icin bir satir uret (Laravel: @foreach) #}
+                    {% for k in kayitlar %}
+                    <tr>
+                        <td>{{ k.sezon }}</td>
+                        <td>{{ k.tarla_adi }}</td>
+                        <td>{{ k.urun_adi }}</td>
+                        <td>{{ k.alan_donum }} donum</td>
+                        <td class="sag">{{ k.toplam_maliyet|tl }}</td>
+                        <td class="sag">{{ k.toplam_gelir|tl }}</td>
+                        <td class="sag {{ 'pozitif' if k.kar_zarar >= 0 else 'negatif' }}">
+                            {{ k.kar_zarar|tl }}
+                        </td>
+                        <td><span class="rozet rozet-notr">{{ k.maliyet_kategori }}</span></td>
+                        <td>
+                            <span class="rozet {{ 'rozet-yesil' if k.durum == 'Kar' else 'rozet-kirmizi' }}">
+                                {{ k.durum }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('sil', kayit_id=k.id) }}"
+                               class="sil-link"
+                               onclick="return confirm('Bu kayit silinsin mi?')">Sil</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="bos-uyari">Henuz kayit yok. "Yeni Kayit Ekle" ile baslayabilirsin.</p>
+        {% endif %}
+    </section>
+
+{% endblock %}
