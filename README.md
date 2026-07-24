@@ -15,6 +15,7 @@ Python, Pandas, NumPy, Matplotlib, Seaborn ve Flask.
 
 
 
+
 ## 1. KURULUM (ilk seferde bir kez yapilir)
 
 Bilgisayarinda Python kurulu olmali. Terminali (VS Code icindeki
